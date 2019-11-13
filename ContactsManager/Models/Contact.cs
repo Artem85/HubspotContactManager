@@ -1,8 +1,5 @@
 ﻿using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace ContactsManager.Models
 {
@@ -13,15 +10,6 @@ namespace ContactsManager.Models
 
         [JsonProperty("properties")]
         public ContactProperties Properties { get; set; }
-
-        //[JsonProperty("firstname")]
-        //public string FirstName { get; set; }
-        //[JsonProperty("lastname")]
-        //public string LastName { get; set; }
-        //[JsonProperty("associatedcompanyid")]
-        //public int CompanyId { get; set; }
-        //[JsonProperty("lifecyclestage")]
-        //public string LifecycleStage { get; set; }
 
     }
 

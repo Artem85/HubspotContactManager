@@ -1,20 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
 using ContactsManager.Models;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 
 namespace ContactsManager.Controllers
 {
     public class HomeController : Controller
     {
-        IOptions<HubspotSettings> settings;
+        readonly IOptions<HubspotSettings> settings;
 
         public HomeController(IOptions<HubspotSettings> settings)
         {
@@ -29,34 +23,21 @@ namespace ContactsManager.Controllers
         public IActionResult Contacts(string startDate, string endDate)
         {
             DateTime sDate = Convert.ToDateTime(startDate);
-            DateTime eDate = Convert.ToDateTime(endDate);
+            //We need to add 1 day to end date because of Unix DateTime stamp assume that date is a begin of the day (12:00 AM)
+            DateTime eDate = Convert.ToDateTime(endDate).AddDays(1);
 
             if (eDate < sDate)
                 return BadRequest();
 
-            long startDateUnix = (Int64)sDate.Subtract((new DateTime(1970, 1, 1))).TotalMilliseconds;
-            long endDateUnix = (Int64)eDate.Subtract((new DateTime(1970, 1, 1))).TotalMilliseconds;
+            long startDateUnix = (long)sDate.Subtract((new DateTime(1970, 1, 1))).TotalMilliseconds;
+            long endDateUnix = (long)eDate.Subtract((new DateTime(1970, 1, 1))).TotalMilliseconds;
 
-            GenerateContactListForGivenDateRange(startDateUnix, endDateUnix);
-            return View();
+            var contacts = ContactsData.GetContactsData(settings)
+                    .Where(t => { long unixDate = Int64.Parse(t.LastModifiedDate);
+                                    return startDateUnix <= unixDate && unixDate <= endDateUnix; });
+
+            return View(contacts);
         }
 
-        private void GenerateContactListForGivenDateRange(double startDate, double endDate)
-        {
-            using (WebClient wc = new WebClient())
-            {
-                string contactsApiUrl = string.Format(settings.Value.ContactsApiUrl,
-                                                    settings.Value.HapiKey);
-                string contactsJson = wc.DownloadString(contactsApiUrl);
-                var contacts = JsonConvert.DeserializeObject<ContactsList>(contactsJson);
-
-                string companiesApiUrl = string.Format(settings.Value.CompaniesApiUrl,
-                                                    settings.Value.HapiKey);
-                string companyJson = wc.DownloadString(companiesApiUrl);
-                var companies = JsonConvert.DeserializeObject<CompanyList>(companyJson);
-
-                string tmp = "breakPoint";
-            }
-        }
     }
 }

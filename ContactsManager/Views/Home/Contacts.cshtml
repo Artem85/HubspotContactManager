@@ -9,7 +9,37 @@
     <meta name="viewport" content="width=device-width" />
 </head>
 <body>
-    <h1>Contacts List</h1>
-    
+    <h3>Contacts List</h3>
+    <table>
+        <tr>
+            <td>Contact Id</td>
+            <td>First Name</td>
+            <td>Last Name</td>
+            <td>Lifecycle Stage</td>
+            <td>Company Id</td>
+            <td>Company Name</td>
+            <td>Website</td>
+            <td>City</td>
+            <td>State</td>
+            <td>Zip</td>
+            <td>Phone</td>
+        </tr>
+        @foreach (var contact in Model)
+        {
+        <tr>
+            <td>@contact.ContactId</td>
+            <td>@contact.FirstName</td>
+            <td>@contact.LastName</td>
+            <td>@contact.LifecycleStage</td>
+            <td>@contact.CompanyId</td>
+            <td>@contact.CompanyName</td>
+            <td>@contact.Website</td>
+            <td>@contact.City</td>
+            <td>@contact.State</td>
+            <td>@contact.Zip</td>
+            <td>@contact.Phone</td>
+        </tr>
+        }
+    </table>
 </body>
 </html>
